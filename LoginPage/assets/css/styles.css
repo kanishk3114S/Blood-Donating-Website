@@ -310,3 +310,41 @@ img {
     border: 2.5px solid var(--first-color);
   }
 }
+
+/* Main login button (filled style, just in case) */
+.login__button {
+  display: inline-block;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #4a6cf7; /* primary color */
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login__button:hover {
+  background: #3955c5; /* darker shade */
+}
+
+/* Ghost button (outline style) */
+.login__button-ghost {
+  display: inline-block;
+  padding: 12px 24px;
+  border: 2px solid #4a6cf7;
+  border-radius: 8px;
+  background: transparent;
+  color: #4a6cf7;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none; /* remove underline */
+}
+
+.login__button-ghost:hover {
+  background: #4a6cf7;
+  color: #fff;
+}
