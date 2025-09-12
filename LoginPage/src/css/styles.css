@@ -1,0 +1,8 @@
+body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5;}
+.form-container { max-width: 400px; margin: 4em auto; background: #fff; padding: 2em; border-radius: 8px; }
+label { display: block; margin-top: 1em; }
+input, select, button { width: 100%; padding: .5em; margin-top: .3em;}
+button { background: #c62828; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-top: 1.2em; }
+button:hover { background: #d32f2f; }
+h2 { color: #c62828; }
+.result-list div { margin-bottom: 1em; }

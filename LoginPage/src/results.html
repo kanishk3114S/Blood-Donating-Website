@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nearby Blood Banks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; }
+    #container { display: flex; height: 100vh; }
+    #sidebar { width: 350px; background: #fff; overflow-y: auto; padding: 16px; border-right: 1px solid #ddd; }
+    #map { flex: 1; min-width: 0; }
+    .bank-entry { border-bottom: 1px solid #eee; margin-bottom: 8px; padding-bottom: 8px; cursor: pointer; }
+    .bank-entry:last-child { border: none; }
+    .bank-title { font-weight: bold; }
+    .directions { color: #1976d2; text-decoration: underline; cursor: pointer;}
+    .notfound { color: #B71C1C; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="sidebar">
+      <h2>Results</h2>
+      <div id="bank-list"><div>Loading blood banks...</div></div>
+    </div>
+    <div id="map"></div>
+  </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // ------------- GET LOCATION FROM URL PARAMS -----------
+    const params = new URLSearchParams(window.location.search);
+    const searchLocation = params.get('location') || "Guwahati";
+    const bloodType = params.get('bloodType') || "";
+
+    // ------------- UTILITIES -----------
+    async function getCoordinates(location) {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.length ? { lat: +data[0].lat, lon: +data[0].lon, display: data[0].display_name } : null;
+    }
+
+    async function getNearbyBloodBanks(lat, lon, radiusMeters = 5000) {
+      const query = `
+        [out:json][timeout:25];
+        (
+          node["amenity"="blood_bank"](around:${radiusMeters},${lat},${lon});
+          way["amenity"="blood_bank"](around:${radiusMeters},${lat},${lon});
+          relation["amenity"="blood_bank"](around:${radiusMeters},${lat},${lon});
+        );
+        out center tags;
+      `;
+      const url = "https://overpass-api.de/api/interpreter";
+      const res = await fetch(url, {
+        method: "POST",
+        body: query,
+        headers: {"Content-Type": "text/plain"}
+      });
+      const data = await res.json();
+      return data.elements.map(e => ({
+        lat: e.lat || e.center?.lat,
+        lon: e.lon || e.center?.lon,
+        name: e.tags?.name || "Unknown Blood Bank",
+        address: [
+          e.tags?.["addr:street"], e.tags?.["addr:city"], e.tags?.["addr:state"]
+        ].filter(Boolean).join(", "),
+        phone: e.tags?.phone || "",
+        opening_hours: e.tags?.opening_hours || "",
+      }));
+    }
+
+    function createSidebarEntry(bank, idx) {
+      // Sidebar markup for each bank (add more details as wanted)
+      return `
+        <div class="bank-entry" data-idx="${idx}">
+          <div class="bank-title">${bank.name}</div>
+          <div>${bank.address}</div>
+          ${bank.phone ? `<div>Call: ${bank.phone}</div>` : ""}
+          ${bank.opening_hours ? `<div>Hours: ${bank.opening_hours}</div>` : ""}
+          <div><span class="directions" data-lat="${bank.lat}" data-lon="${bank.lon}">Directions</span></div>
+        </div>
+      `;
+    }
+
+    // ---------- MAIN LOGIC ----------
+    (async function() {
+      // 1. Geocode user-entered location
+      const coords = await getCoordinates(searchLocation);
+      if (!coords) {
+        document.getElementById('bank-list').innerHTML = `<div class="notfound">Could not find location: ${searchLocation}</div>`;
+        return;
+      }
+
+      // 2. Init map
+      const map = L.map('map').setView([coords.lat, coords.lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OSM contributors' }).addTo(map);
+
+      // 3. Draw buffer/search circle
+      const searchRadius = 5000;
+      L.circle([coords.lat, coords.lon], {
+        color: '#C62828', fillColor: '#FFCDD2',
+        fillOpacity: 0.3, radius: searchRadius
+      }).addTo(map);
+
+      // 4. Get nearby blood banks and display results
+      const banks = await getNearbyBloodBanks(coords.lat, coords.lon, searchRadius);
+
+      const markers = [];
+      const bankList = document.getElementById('bank-list');
+      if (!banks.length) {
+        bankList.innerHTML = `<div class="notfound">No blood banks found near ${searchLocation}.</div>`;
+      } else {
+        bankList.innerHTML = banks.map((b, i) => createSidebarEntry(b, i)).join("");
+      }
+
+      banks.forEach((b, i) => {
+        const m = L.marker([b.lat, b.lon]).addTo(map);
+        m.bindPopup(
+          `<b>${b.name}</b><br>${b.address ? b.address+"<br>" : ""}${b.phone ? "Call: "+b.phone+"<br>" : ""}${b.opening_hours ? b.opening_hours+"<br>" : ""}`
+        );
+        markers.push(m);
+      });
+
+      // Pan/Popup open when list item is clicked
+      bankList.addEventListener('click', function(e) {
+        const entry = e.target.closest('.bank-entry');
+        if (entry) {
+          const idx = parseInt(entry.getAttribute('data-idx'), 10);
+          if(!isNaN(idx)){
+            map.setView([banks[idx].lat, banks[idx].lon], 16);
+            markers[idx].openPopup();
+          }
+        }
+        // "Directions" click
+        if (e.target.classList.contains('directions')) {
+          const lat = e.target.getAttribute("data-lat");
+          const lon = e.target.getAttribute("data-lon");
+          window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`, "_blank");
+          e.stopPropagation();
+        }
+      });
+
+      // Optional: Center marker/popup open if marker is clicked (handled automatically by Leaflet)
+    })();
+    const userType = new URLSearchParams(window.location.search).get('type');
+    document.querySelector('h2').textContent = userType === 'recipient' ? 'Blood Banks Near You' : 'Nearby Blood Donation Centers';
+
+  </script>
+</body>
+</html>
