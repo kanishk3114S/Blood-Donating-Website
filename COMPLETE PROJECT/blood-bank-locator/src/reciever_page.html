@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blood Donation - Recipient Form</title>
+  <style>
+    body { font-family: Arial; background: #e3f2fd; padding: 30px; }
+    .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; }
+    input, select, textarea { width: 100%; padding: 8px; border: 1px solid #c0c0c0; border-radius: 4px; box-sizing: border-box; }
+    textarea { resize: vertical; height: 80px; }
+    button { padding: 10px 22px; background: #1976d2; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0d47a1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Blood Request Form</h2>
+    <form id="recipientForm">
+      <!-- Existing fields -->
+      <div class="form-group">
+        <label for="recipientName">Your Name:</label>
+        <input required id="recipientName" type="text" name="name" placeholder="Enter your name">
+      </div>
+      <div class="form-group">
+        <label for="bloodType">Required Blood Type:</label>
+        <select required id="bloodType" name="bloodType">
+          <option value="">Select</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option>
+          <option>O+</option><option>O-</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="location">Location (City or Area):</label>
+        <input required id="location" type="text" name="location" placeholder="e.g. Guwahati">
+      </div>
+
+      <!-- New fields -->
+      <div class="form-group">
+        <label for="patientAge">Patient's Age:</label>
+        <input required id="patientAge" type="number" min="0" max="120" placeholder="Enter patient age">
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Patient's Gender:</label>
+        <select required id="gender" name="gender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="requestDate">Date of Request:</label>
+        <input required id="requestDate" type="date" max="">
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Quantity of Blood Required (units):</label>
+        <input required id="quantity" type="number" min="1" max="100" placeholder="e.g. 2">
+      </div>
+
+      <div class="form-group">
+        <label for="urgency">Urgency Level:</label>
+        <select required id="urgency" name="urgency">
+          <option value="">Select urgency</option>
+          <option>Normal</option>
+          <option>Urgent</option>
+          <option>Emergency</option>
+          <option>Critical</option>
+          <option>Immediate</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Reason for Transfusion / Clinical Diagnosis:</label>
+        <textarea id="reason" name="reason" placeholder="Describe the reason or diagnosis" required></textarea>
+      </div>
+
+      <!-- Existing button unchanged -->
+      <button type="submit">Search Blood Banks</button>
+    </form>
+  </div>
+
+  <script>
+    // Set max date for requestDate as today
+    document.getElementById('requestDate').max = new Date().toISOString().split('T')[0];
+
+    document.getElementById('recipientForm').onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('recipientName').value;
+      const bloodType = document.getElementById('bloodType').value;
+      const location = document.getElementById('location').value;
+      // You can extend parameters here if you wish to handle others downstream
+      window.location.href = `result_reciever.html?type=recipient&bloodType=${encodeURIComponent(bloodType)}&location=${encodeURIComponent(location)}&name=${encodeURIComponent(name)}`;
+    }
+  </script>
+</body>
+</html>

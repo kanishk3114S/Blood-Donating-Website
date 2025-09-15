@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blood Hero - Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9e6e0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #4a2c2a;
+    }
+    header {
+      background-color: #d9a8a0;
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 50px;
+      user-select: none;
+    }
+    main {
+      max-width: 480px;
+      width: 90%;
+      background: #fff7f5;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(217, 168, 160, 0.4);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #a96f6a;
+    }
+    p {
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    .btn-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    a.button {
+      background-color: #e9bdb5;
+      color: #4a2c2a;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 12px rgba(233, 189, 181, 0.7);
+      user-select: none;
+      flex: 1 1 140px;
+      max-width: 180px;
+    }
+    a.button:hover {
+      background-color: #ca9b91;
+      color: white;
+      box-shadow: 0 5px 15px rgba(202, 155, 145, 0.9);
+    }
+    footer {
+      margin-top: 60px;
+      color: #7a4c48;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    @media (max-width: 400px) {
+      .btn-group {
+        flex-direction: column;
+      }
+      a.button {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Blood Hero
+  </header>
+  <main>
+    <h1>Welcome to Blood Hero</h1>
+    <p>
+      Join us to save lives by donating blood or requesting blood when in need. Easily find nearby blood banks and contribute to your community’s health.
+    </p>
+    <div class="btn-group">
+      <a href="registration.html" class="button" aria-label="Donor Registration Page">Donate Blood</a>
+      <a href="registration.html" class="button" aria-label="Recipient Request Page">Request Blood</a>
+      <a href="registration.html" class="button" aria-label="Find Blood Banks">Find Blood Banks</a>
+      <a href="login.html" class="button" aria-label="User Login Page">Login</a>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 Blood Hero. All rights reserved.
+  </footer>
+</body>
+</html>

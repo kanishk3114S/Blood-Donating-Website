@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Your Website</title>
+    <style>
+        /* ------ your existing CSS unchanged ------ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .register-header { text-align: center; margin-bottom: 30px;}
+        .register-header h1 { color: #333; font-size: 2rem; margin-bottom: 10px; font-weight: 600;}
+        .register-header p { color: #666; font-size: 0.9rem;}
+        .form-row { display: flex; gap: 15px; margin-bottom: 20px;}
+        .form-group { margin-bottom: 20px; flex: 1;}
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 0.9rem;}
+        .form-group input, .form-group select { width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; background-color: #f8f9fa;}
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; background-color: white; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);}
+        .form-group input::placeholder { color: #adb5bd;}
+        .password-strength { margin-top: 8px; font-size: 0.8rem;}
+        .strength-bar { height: 4px; background: #e1e5e9; border-radius: 2px; margin: 5px 0; overflow: hidden;}
+        .strength-fill { height: 100%; width: 0%; transition: all 0.3s ease; border-radius: 2px;}
+        .strength-weak { background: #ff4757; width: 25%;}
+        .strength-fair { background: #ffa502; width: 50%;}
+        .strength-good { background: #2ed573; width: 75%;}
+        .strength-strong { background: #5352ed; width: 100%;}
+        .checkbox-group { display: flex; align-items: flex-start; margin-bottom: 25px; gap: 10px;}
+        .checkbox-group input[type="checkbox"] { width: auto; margin-top: 3px; cursor: pointer; flex-shrink: 0;}
+        .checkbox-group label { margin-bottom: 0; font-size: 0.85rem; cursor: pointer; line-height: 1.4;}
+        .checkbox-group label a { color: #667eea; text-decoration: none;}
+        .checkbox-group label a:hover { text-decoration: underline;}
+        .register-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;}
+        .register-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);}
+        .register-btn:active { transform: translateY(0);}
+        .register-btn:disabled { background: #adb5bd; cursor: not-allowed; transform: none; box-shadow: none;}
+        .divider { text-align: center; margin: 25px 0; position: relative; color: #666; font-size: 0.85rem;}
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e1e5e9; z-index: 1;}
+        .divider span { background: white; padding: 0 15px; position: relative; z-index: 2;}
+        .login-link { text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;}
+        .login-link a { color: #667eea; text-decoration: none; font-weight: 600; transition: color 0.3s ease;}
+        .login-link a:hover { color: #5a67d8;}
+        .error-message { color: #ff4757; font-size: 0.8rem; margin-top: 5px; display: none;}
+        .error-message.show { display: block;}
+        @media (max-width: 580px) {
+            .form-row { flex-direction: column; gap: 0;}
+            .register-container { padding: 30px 20px; margin: 10px;}
+            .register-header h1 { font-size: 1.75rem;}
+        }
+    </style>
+    <!-- Add Firebase CDN SDKs and config here -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJomkPgl3xozuFw2_69LE3NCCb7rZYevw",
+            authDomain: "blood-hero-ed188.firebaseapp.com",
+            projectId: "blood-hero-ed188",
+            storageBucket: "blood-hero-ed188.firebasestorage.app",
+            messagingSenderId: "806006453200",
+            appId: "1:806006453200:web:b72ebd8130b6ee1d1a3fd5",
+            measurementId: "G-B2K41K2JX4"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join us today! It only takes a minute</p>
+        </div>
+        
+        <form id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
+                    <div class="error-message" id="firstNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required>
+                    <div class="error-message" id="lastNameError"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                <div class="error-message" id="phoneError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <span id="strengthText">Password strength</span>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            <button type="submit" class="register-btn" id="registerBtn">Create Account</button>
+        </form>
+        
+        <div class="divider">
+            <span>or</span>
+        </div>
+        
+        <div class="login-link">
+            Already have an account? <a href="login.html">Sign in</a>
+        </div>
+    </div>
+    <script>
+        // Real-time validation and password strength code (unchanged)
+        const form = document.getElementById('registerForm');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            updatePasswordStrength(strength);
+        });
+
+        function checkPasswordStrength(password) {
+            let score = 0;
+            let feedback = [];
+            if (password.length >= 8) score++; else feedback.push('at least 8 characters');
+            if (/[a-z]/.test(password)) score++; else feedback.push('lowercase letter');
+            if (/[A-Z]/.test(password)) score++; else feedback.push('uppercase letter');
+            if (/[0-9]/.test(password)) score++; else feedback.push('number');
+            if (/[^A-Za-z0-9]/.test(password)) score++; else feedback.push('special character');
+            return { score, feedback };
+        }
+
+        function updatePasswordStrength(strength) {
+            const { score, feedback } = strength;
+            strengthFill.className = 'strength-fill';
+            if (score === 0) {
+                strengthText.textContent = 'Password strength';
+            } else if (score <= 2) {
+                strengthFill.classList.add('strength-weak');
+                strengthText.textContent = 'Weak - Add ' + feedback.slice(0, 2).join(' and ');
+            } else if (score === 3) {
+                strengthFill.classList.add('strength-fair');
+                strengthText.textContent = 'Fair - Add ' + feedback.join(' and ');
+            } else if (score === 4) {
+                strengthFill.classList.add('strength-good');
+                strengthText.textContent = 'Good - Add ' + feedback.join('');
+            } else {
+                strengthFill.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password!';
+            }
+        }
+
+        confirmPasswordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const confirmPassword = this.value;
+            const errorElement = document.getElementById('confirmPasswordError');
+            if (confirmPassword && password !== confirmPassword) {
+                errorElement.textContent = 'Passwords do not match';
+                errorElement.classList.add('show');
+            } else {
+                errorElement.classList.remove('show');
+            }
+        });
+
+        // Firebase registration logic and Firestore user save!
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const firstName = form.firstName.value;
+            const lastName = form.lastName.value;
+            const email = form.email.value.trim();
+            const phone = form.phone.value;
+            const password = form.password.value;
+            const confirmPassword = form.confirmPassword.value;
+
+            // Local validation for match
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                document.getElementById('confirmPasswordError').classList.add('show');
+                return;
+            }
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating Account...';
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Save to Firestore
+                    return firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phone: phone
+                    });
+                })
+                .then(() => {
+                    alert('Registration successful!\nWelcome ' + firstName + '!');
+                    window.location.href = 'login.html';
+                })
+                .catch(error => {
+                    alert('Registration failed: ' + error.message);
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Create Account';
+                });
+        });
+
+        // Real-time validation for required fields
+        document.querySelectorAll('input[required], select[required]').forEach(field => {
+            field.addEventListener('blur', function() {
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement && !this.value.trim()) {
+                    errorElement.textContent = 'This field is required';
+                    errorElement.classList.add('show');
+                } else if (errorElement) {
+                    errorElement.classList.remove('show');
+                }
+            });
+            field.addEventListener('input', function() {
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement && this.value.trim()) {
+                    errorElement.classList.remove('show');
+                }
+            });
+        });
+
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value;
+            const errorElement = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                errorElement.textContent = 'Please enter a valid email address';
+                errorElement.classList.add('show');
+            }
+        });
+
+        document.getElementById('phone').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9+\-\s()]/g, '');
+        });
+    </script>
+</body>
+</html>

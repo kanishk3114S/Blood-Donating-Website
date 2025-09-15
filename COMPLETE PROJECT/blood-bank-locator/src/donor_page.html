@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blood Donation - Donor Form</title>
+  <style>
+    body { font-family: Arial; background: #ffeaea; padding: 30px; }
+    .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #c0c0c0; border-radius: 4px; box-sizing: border-box; }
+    button { padding: 10px 22px; background: #e53935; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #b71c1c; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Donor Registration</h2>
+    <form id="donorForm">
+      <!-- Existing fields -->
+      <div class="form-group">
+        <label>Name:</label>
+        <input required id="name" type="text">
+      </div>
+      <div class="form-group">
+        <label>Blood Type:</label>
+        <select required id="bloodType">
+          <option value="">Select</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option>
+          <option>O+</option><option>O-</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Location (City or Area):</label>
+        <input required id="location" type="text" placeholder="e.g. Guwahati">
+      </div>
+
+      <!-- New fields -->
+      <div class="form-group">
+        <label>Age:</label>
+        <input required id="age" type="number" min="1" max="120" placeholder="Enter your age">
+      </div>
+
+      <div class="form-group">
+        <label>Gender:</label>
+        <select required id="gender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Have you donated blood before?</label>
+        <select required id="donationHistory">
+          <option value="">Select</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="lastDonationDiv" style="display:none;">
+        <label>When was your last donation?</label>
+        <input id="lastDonation" type="date" max="">
+      </div>
+
+      <fieldset style="margin-bottom: 15px; border: 1px solid #c0c0c0; padding: 10px; border-radius:4px;">
+        <legend style="font-weight:bold; padding:0 5px;">Health and Eligibility Questions</legend>
+        <label><input type="checkbox" required id="feelingWell"> Are you feeling well today?</label><br>
+        <label><input type="checkbox" required id="eatenRecently"> Have you eaten in last 4 hours?</label><br>
+        <label><input type="checkbox" id="pregnantOrBreastfeeding"> Are you currently pregnant or breastfeeding?</label><br>
+        <label><input type="checkbox" required id="noRecentIllness"> Have you had any recent illnesses or infections?</label><br>
+        <label><input type="checkbox" required id="noChronicCond"> Do you have any chronic medical conditions? (like heart disease, anemia)</label>
+      </fieldset>
+
+      <div class="form-group">
+        <label>Weight (kg):</label>
+        <input required id="weight" type="number" min="30" max="200" placeholder="e.g. 65">
+      </div>
+
+      <div class="form-group">
+        <label>Height (cm):</label>
+        <input required id="height" type="number" min="100" max="250" placeholder="e.g. 170">
+      </div>
+
+      <!-- Existing button unchanged -->
+      <button type="submit">Find Blood Banks</button>
+    </form>
+  </div>
+
+  <script>
+    // Show/hide last donation date input depending on donation history
+    const donationHistory = document.getElementById('donationHistory');
+    const lastDonationDiv = document.getElementById('lastDonationDiv');
+    const lastDonationInput = document.getElementById('lastDonation');
+
+    // Set max date for last donation as today
+    lastDonationInput.max = new Date().toISOString().split('T')[0];
+
+    donationHistory.addEventListener('change', () => {
+      lastDonationDiv.style.display = donationHistory.value === 'yes' ? 'block' : 'none';
+      if (donationHistory.value !== 'yes') {
+        lastDonationInput.value = '';
+      }
+    });
+
+    document.getElementById('donorForm').onsubmit = function(e) {
+      e.preventDefault();
+
+      // Age validation (cannot donate if under 18)
+      const age = parseInt(document.getElementById('age').value, 10);
+      if (age < 18) {
+        alert("Sorry, you must be at least 18 years old to donate blood.");
+        return;
+      }
+
+      // Additional validations can be added here as needed
+
+      const name = document.getElementById('name').value;
+      const bloodType = document.getElementById('bloodType').value;
+      const location = document.getElementById('location').value;
+      // Pass only the original parameters as per your request (you can extend this later)
+      window.location.href = `result_donor.html?type=donor&bloodType=${encodeURIComponent(bloodType)}&location=${encodeURIComponent(location)}`;
+    };
+  </script>
+</body>
+</html>
