@@ -3,14 +3,14 @@
   "name": "blood-bank-project",
   "builds": [
     {
-      "src": "src/login-registration/index.html",
+      "src": "src/index.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/login-registration/$1"
+      "dest": "src/$1"
     }
   ]
 }
