@@ -1,8 +1,16 @@
 {
-  "rewrites": [
+  "version": 2,
+  "name": "blood-bank-project",
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "./src/login-registration/index.html"
+      "src": "src/login-registration/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/login-registration/$1"
     }
   ]
 }
