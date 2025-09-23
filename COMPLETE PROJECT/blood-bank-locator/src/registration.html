@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Your Website</title>
     <style>
-        /* ------ your existing CSS unchanged ------ */
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -67,7 +67,7 @@
             .register-header h1 { font-size: 1.75rem;}
         }
     </style>
-    <!-- Add Firebase CDN SDKs and config here -->
+
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -91,19 +91,26 @@
             <p>Join us today! It only takes a minute</p>
         </div>
         
-        <form id="registerForm">
+        <!-- Registration Form ????????????????????????????????????????????????????????????????????????????? -->
+        <form id="registerForm" action="connect.php" method="POST">
+
+
             <div class="form-row">
+
                 <div class="form-group">
                     <label for="firstName">First Name</label>
                     <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
                     <div class="error-message" id="firstNameError"></div>
                 </div>
+
                 <div class="form-group">
                     <label for="lastName">Last Name</label>
                     <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required>
                     <div class="error-message" id="lastNameError"></div>
                 </div>
             </div>
+
+
             
             <div class="form-group">
                 <label for="email">Email Address</label>
@@ -128,6 +135,8 @@
                 </div>
                 <div class="error-message" id="passwordError"></div>
             </div>
+
+
             
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
@@ -135,6 +144,9 @@
                 <div class="error-message" id="confirmPasswordError"></div>
             </div>
             <button type="submit" class="register-btn" id="registerBtn">Create Account</button>
+
+
+
         </form>
         
         <div class="divider">
@@ -202,7 +214,7 @@
             }
         });
 
-        // Firebase registration logic and Firestore user save!
+        // Firebase registration logic and Firestore user save
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 

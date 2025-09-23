@@ -13,16 +13,33 @@
     button { padding: 10px 22px; background: #1976d2; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
     button:hover { background: #0d47a1; }
   </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJomkPgl3xozuFw2_69LE3NCCb7rZYevw",
+      authDomain: "blood-hero-ed188.firebaseapp.com",
+      projectId: "blood-hero-ed188",
+      storageBucket: "blood-hero-ed188.firebasestorage.app",
+      messagingSenderId: "806006453200",
+      appId: "1:806006453200:web:b72ebd8130b6ee1d1a3fd5",
+      measurementId: "G-B2K41K2JX4"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
 <body>
   <div class="container">
     <h2>Blood Request Form</h2>
+
     <form id="recipientForm">
-      <!-- Existing fields -->
       <div class="form-group">
         <label for="recipientName">Your Name:</label>
         <input required id="recipientName" type="text" name="name" placeholder="Enter your name">
       </div>
+
       <div class="form-group">
         <label for="bloodType">Required Blood Type:</label>
         <select required id="bloodType" name="bloodType">
@@ -33,12 +50,12 @@
           <option>O+</option><option>O-</option>
         </select>
       </div>
+
       <div class="form-group">
         <label for="location">Location (City or Area):</label>
         <input required id="location" type="text" name="location" placeholder="e.g. Guwahati">
       </div>
 
-      <!-- New fields -->
       <div class="form-group">
         <label for="patientAge">Patient's Age:</label>
         <input required id="patientAge" type="number" min="0" max="120" placeholder="Enter patient age">
@@ -82,23 +99,42 @@
         <textarea id="reason" name="reason" placeholder="Describe the reason or diagnosis" required></textarea>
       </div>
 
-      <!-- Existing button unchanged -->
       <button type="submit">Search Blood Banks</button>
     </form>
   </div>
 
   <script>
-    // Set max date for requestDate as today
     document.getElementById('requestDate').max = new Date().toISOString().split('T')[0];
 
     document.getElementById('recipientForm').onsubmit = function(e) {
       e.preventDefault();
-      const name = document.getElementById('recipientName').value;
-      const bloodType = document.getElementById('bloodType').value;
-      const location = document.getElementById('location').value;
-      // You can extend parameters here if you wish to handle others downstream
-      window.location.href = `result_reciever.html?type=recipient&bloodType=${encodeURIComponent(bloodType)}&location=${encodeURIComponent(location)}&name=${encodeURIComponent(name)}`;
-    }
+
+      const data = {
+        name: document.getElementById('recipientName').value,
+        bloodType: document.getElementById('bloodType').value,
+        location: document.getElementById('location').value,
+        patientAge: Number(document.getElementById('patientAge').value),
+        gender: document.getElementById('gender').value,
+        requestDate: document.getElementById('requestDate').value,
+        quantity: Number(document.getElementById('quantity').value),
+        urgency: document.getElementById('urgency').value,
+        reason: document.getElementById('reason').value,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // Add data to 'recipients' collection
+      firebase.firestore().collection('recipients').add(data)
+        .then(() => {
+          // After saving, redirect as before
+          const name = encodeURIComponent(data.name);
+          const bloodType = encodeURIComponent(data.bloodType);
+          const location = encodeURIComponent(data.location);
+          window.location.href = `result_reciever.html?type=recipient&bloodType=${bloodType}&location=${location}&name=${name}`;
+        })
+        .catch(error => {
+          alert('Error saving request: ' + error.message);
+        });
+    };
   </script>
 </body>
 </html>
